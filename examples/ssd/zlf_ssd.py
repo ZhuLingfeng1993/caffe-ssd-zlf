@@ -30,8 +30,11 @@ def set_switches_section():
   print('Setting switches ...')
 set_switches_section()
 
-use_CPU = True
-
+use_CPU=False
+HOMEDIR = os.path.expanduser("~")
+if HOMEDIR == "/home/zhulingfeng":
+  use_CPU = True
+  
 gen_fssd = False
 gen_ssd = True
 gen_ssdLite = gen_ssd and False
@@ -85,9 +88,9 @@ resize = "{}x{}".format(resize_width, resize_height)
 def job_name_define():
   # Modify the job name if you want.
   if gen_fssd == True:
-    job_name = "FSSD_adjust_bbox{}".format(resize)
+    job_name = "FSSD_new_lr_0_0001_{}".format(resize)
   elif gen_ssd == True:
-    job_name = "SSD_{}".format(resize)
+    job_name = "SSD_lr0_0005_batch80_{}".format(resize)
     if gen_ssdLite:
       job_name = "SSDExtraLite_{}".format(resize)
   if check_net_flag == True:
@@ -98,7 +101,7 @@ job_name = job_name_define()
 # basenet name
 basenet_name = "MobileNetMove4"#"VGGNet"#"MobileNet"#
 # train dataset name
-dataset_name = "selected_and_manny_people_data_300x300"#"coco"#"many_people_data_undistorted_300x300"#"UndistortedImgDataNew_300x300"#"VOC0712"#
+dataset_name = "coco"#"selected_and_manny_people_data_300x300"#"many_people_data_undistorted_300x300"#"UndistortedImgDataNew_300x300"#"VOC0712"#
 # test dataset name
 test_dataset_name = dataset_name #"VOC2007"#
 # The name of the model. Modify it if you want.
@@ -416,12 +419,12 @@ solver_param_define_section()
 
 def solver_param_define4train():
   # Defining which GPUs to use.
-  gpus = "2"
+  gpus = "2,3"#"1,0,3"
   gpulist = gpus.split(",")
   num_gpus = len(gpulist)
 
   # Divide the mini-batch to different GPUs.
-  batch_size = 20*num_gpus#48*num_gpus
+  batch_size = 40*num_gpus#48*num_gpus
   accum_batch_size = batch_size
   iter_size = accum_batch_size / batch_size
   solver_mode = P.Solver.CPU
@@ -448,14 +451,15 @@ def solver_param_define4train():
   
   solver_param = {
     # Train parameters
-    'base_lr': 0.0001,
+    'base_lr': 0.0005,
     'weight_decay': 0.00005,
     'lr_policy': "multistep",
-    'stepvalue': [40000,80000, 100000],
+    #'stepvalue': [40000,80000,100000,120000],
+    'stepvalue': [160000],
     'gamma': 0.5,
     #'momentum': 0.9,
     'iter_size': iter_size,
-    'max_iter': 280000,
+    'max_iter': 160000,
     'snapshot': 10000,
     'display': display_interval,
     'average_loss': 1,
@@ -537,7 +541,7 @@ def solver_param_define4exchange_data():
   
 def solver_param_define4check_net():
   # Defining which GPUs to use.
-  gpus = "1"
+  gpus = "2"
   gpulist = gpus.split(",")
   num_gpus = len(gpulist)
   if use_CPU == True:
