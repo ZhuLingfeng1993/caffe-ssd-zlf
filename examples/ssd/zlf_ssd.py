@@ -46,7 +46,7 @@ exchange_data = False
 # Set true if you want to start training right after generating all files.
 run_soon = True
 # Set true if you want to check the net is set properly(use small batch and CPU)
-check_net_flag = True
+check_net_flag = False
 save_snapshot_in_check_net = True
 # Set true if you want to mergn bn in the most recent snapshot
 # Set true if necessary since it cost more storage space
@@ -116,7 +116,7 @@ job_dir = "jobs/{}/{}/{}".format(basenet_name, dataset_name, job_name)
 # Directory which stores the log file.
 job_log_dir = "{}/log".format(job_dir)
 # Directory which stores the detection results.
-#output_result_dir = "data/{}/results/{}/{}/{}/Main".format(basenet_name, dataset_name, test_dataset_name,job_name)
+output_result_dir = "data/{}/results/{}/{}/{}/Main".format(dataset_name, basenet_name, test_dataset_name,job_name)
 
 # model definition files.
 train_net_file = "{}/train.prototxt".format(save_dir)
@@ -141,7 +141,7 @@ def data_set_section():
 data_set_section()
 
 # Stores the test image names and sizes. Created by data/VOC0712/create_list.sh
-#name_size_file = "{}/VOC0712/val_name_size.txt".format(data_root)
+name_size_file = "{}/VOC0712/val_name_size.txt".format(data_root)
 
 ## Stores LabelMapItem.
 label_map_file = "{}/{}/VOC2007/labelmap_voc.prototxt".format(data_root, dataset_name)
@@ -165,7 +165,7 @@ num_train_image = 4522#535#13536
 num_test_image = 1508#179#4513
 
 if dataset_name == "coco":
-  #name_size_file = "{}/VOC0712/val_name_size.txt".format(data_root)
+  name_size_file = "{}/coco/val2017_name_size.txt".format(data_root)
   
   ## Stores LabelMapItem.
   label_map_file = "{}/{}/labelmap_coco.prototxt".format(data_root, dataset_name)
@@ -202,14 +202,14 @@ if use_pretrain_model:
 
 check_if_exist(train_data)
 check_if_exist(test_data)
-#check_if_exist(name_size_file)
+check_if_exist(name_size_file)
 check_if_exist(label_map_file)
 
 make_if_not_exist(save_dir)
 make_if_not_exist(job_dir)
 make_if_not_exist(job_log_dir)
 make_if_not_exist(snapshot_dir)
-#make_if_not_exist(output_result_dir)
+make_if_not_exist(output_result_dir)
 
 ################### Define data layer preprocess parameters. ##################
 def data_layer_param_define_section():
@@ -419,12 +419,12 @@ solver_param_define_section()
 
 def solver_param_define4train():
   # Defining which GPUs to use.
-  gpus = "2,3"#"1,0,3"
+  gpus = "1,2,3"#"1,0,3"
   gpulist = gpus.split(",")
   num_gpus = len(gpulist)
 
   # Divide the mini-batch to different GPUs.
-  batch_size = 40*num_gpus#48*num_gpus
+  batch_size = 25*num_gpus#48*num_gpus
   accum_batch_size = batch_size
   iter_size = accum_batch_size / batch_size
   solver_mode = P.Solver.CPU
@@ -455,11 +455,11 @@ def solver_param_define4train():
     'weight_decay': 0.00005,
     'lr_policy': "multistep",
     #'stepvalue': [40000,80000,100000,120000],
-    'stepvalue': [160000],
+    'stepvalue': [160000,200000,240000,250000,260000,270000,280000,290000],
     'gamma': 0.5,
     #'momentum': 0.9,
     'iter_size': iter_size,
-    'max_iter': 160000,
+    'max_iter': 300000,
     'snapshot': 10000,
     'display': display_interval,
     'average_loss': 1,
@@ -732,19 +732,23 @@ det_out_eval_defint_section()
 
 # parameters for generating detection output.
 global det_out_param
+output_name_prefix ="det_results_"
+output_format = "VOC"
+if dataset_name == "coco":
+  output_format = "COCO"
 det_out_param = {
     'num_classes': num_classes,
     'share_location': share_location,
     'background_label_id': background_label_id,
     'nms_param': {'nms_threshold': 0.45, 'top_k': 400},
-#    'save_output_param': {
-#        'output_directory': output_result_dir,
-#        'output_name_prefix': "comp4_det_test_",
-#        'output_format': "VOC",
-#        'label_map_file': label_map_file,
-#        'name_size_file': name_size_file,
-#        'num_test_image': num_test_image,
-#        },
+    'save_output_param': {
+        'output_directory': output_result_dir,
+        'output_name_prefix': output_name_prefix,
+        'output_format': output_format,
+        'label_map_file': label_map_file,
+        'name_size_file': name_size_file,
+        'num_test_image': num_test_image,
+        },
     'keep_top_k': 200,
     'confidence_threshold': 0.01,
     'code_type': code_type,
@@ -754,16 +758,16 @@ det_out_param_deploy = {
     'num_classes': num_classes,
     'share_location': share_location,
     'background_label_id': background_label_id,
-    'nms_param': {'nms_threshold': 0.45, 'top_k': 20},
-#    'save_output_param': {
-#        'output_directory': output_result_dir,
-#        'output_name_prefix': "comp4_det_test_",
-#        'output_format': "VOC",
-#        'label_map_file': label_map_file,
-#        'name_size_file': name_size_file,
-#        'num_test_image': num_test_image,
-#        },
-    'keep_top_k': 20,
+    'nms_param': {'nms_threshold': 0.45, 'top_k': 50},
+    'save_output_param': {
+        'output_directory': output_result_dir,
+        'output_name_prefix': output_name_prefix,
+        'output_format': output_format,
+        'label_map_file': label_map_file,
+        'name_size_file': name_size_file,
+        'num_test_image': num_test_image,
+        },
+    'keep_top_k': 50,
     'confidence_threshold': 0.4,
     'code_type': code_type,
     }
@@ -774,7 +778,7 @@ det_eval_param = {
     'background_label_id': background_label_id,
     'overlap_threshold': 0.5,
     'evaluate_difficult_gt': False,
-#    'name_size_file': name_size_file,
+    'name_size_file': name_size_file,
     }
 
 ################### Create net prototxt files. ################################
@@ -1264,3 +1268,4 @@ os.chmod(train_job_file, stat.S_IRWXU)
 if run_soon:
   print('Run the train job...\n')
   subprocess.call(train_job_file, shell=True)
+
