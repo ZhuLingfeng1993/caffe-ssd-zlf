@@ -48,6 +48,7 @@ run_soon = True
 # Set true if you want to check the net is set properly(use small batch and CPU)
 check_net_flag = False
 save_snapshot_in_check_net = True
+save_det_out = False
 # Set true if you want to mergn bn in the most recent snapshot
 # Set true if necessary since it cost more storage space
 merge_bn_soon = True
@@ -99,7 +100,7 @@ def job_name_define():
 
 job_name = job_name_define()
 # basenet name
-basenet_name = "MobileNetMove4"#"VGGNet"#"MobileNet"#
+basenet_name = "MobileNet"#"MobileNetMove4"#"VGGNet"#
 # train dataset name
 dataset_name = "coco"#"selected_and_manny_people_data_300x300"#"many_people_data_undistorted_300x300"#"UndistortedImgDataNew_300x300"#"VOC0712"#
 # test dataset name
@@ -116,7 +117,7 @@ job_dir = "jobs/{}/{}/{}".format(basenet_name, dataset_name, job_name)
 # Directory which stores the log file.
 job_log_dir = "{}/log".format(job_dir)
 # Directory which stores the detection results.
-output_result_dir = "data/{}/results/{}/{}/{}/Main".format(dataset_name, basenet_name, test_dataset_name,job_name)
+output_result_dir = "data/{}/results/{}/{}/Main".format(dataset_name, test_dataset_name, model_name)
 
 # model definition files.
 train_net_file = "{}/train.prototxt".format(save_dir)
@@ -419,12 +420,12 @@ solver_param_define_section()
 
 def solver_param_define4train():
   # Defining which GPUs to use.
-  gpus = "1,2,3"#"1,0,3"
+  gpus = "2,3"#"1,0,3"
   gpulist = gpus.split(",")
   num_gpus = len(gpulist)
 
   # Divide the mini-batch to different GPUs.
-  batch_size = 25*num_gpus#48*num_gpus
+  batch_size = 40*num_gpus#48*num_gpus
   accum_batch_size = batch_size
   iter_size = accum_batch_size / batch_size
   solver_mode = P.Solver.CPU
@@ -455,11 +456,11 @@ def solver_param_define4train():
     'weight_decay': 0.00005,
     'lr_policy': "multistep",
     #'stepvalue': [40000,80000,100000,120000],
-    'stepvalue': [160000,200000,240000,250000,260000,270000,280000,290000],
+    'stepvalue': [60000,100000,120000,140000],
     'gamma': 0.5,
     #'momentum': 0.9,
     'iter_size': iter_size,
-    'max_iter': 300000,
+    'max_iter': 160000,
     'snapshot': 10000,
     'display': display_interval,
     'average_loss': 1,
@@ -731,42 +732,38 @@ def det_out_eval_defint_section():
 det_out_eval_defint_section()
 
 # parameters for generating detection output.
-global det_out_param
 output_name_prefix ="det_results_"
 output_format = "VOC"
+save_output_param = {
+  'output_directory': output_result_dir,
+  'output_name_prefix': output_name_prefix,
+  'output_format': output_format,
+  'label_map_file': label_map_file,
+  'name_size_file': name_size_file,
+  'num_test_image': num_test_image,
+  }
 if dataset_name == "coco":
   output_format = "COCO"
+  
+global det_out_param 
 det_out_param = {
     'num_classes': num_classes,
     'share_location': share_location,
     'background_label_id': background_label_id,
     'nms_param': {'nms_threshold': 0.45, 'top_k': 400},
-    'save_output_param': {
-        'output_directory': output_result_dir,
-        'output_name_prefix': output_name_prefix,
-        'output_format': output_format,
-        'label_map_file': label_map_file,
-        'name_size_file': name_size_file,
-        'num_test_image': num_test_image,
-        },
     'keep_top_k': 200,
     'confidence_threshold': 0.01,
     'code_type': code_type,
     }
+if save_det_out:
+	det_out_param['save_output_param'] = save_output_param
+	
 global det_out_param_deploy
 det_out_param_deploy = {
     'num_classes': num_classes,
     'share_location': share_location,
     'background_label_id': background_label_id,
     'nms_param': {'nms_threshold': 0.45, 'top_k': 50},
-    'save_output_param': {
-        'output_directory': output_result_dir,
-        'output_name_prefix': output_name_prefix,
-        'output_format': output_format,
-        'label_map_file': label_map_file,
-        'name_size_file': name_size_file,
-        'num_test_image': num_test_image,
-        },
     'keep_top_k': 50,
     'confidence_threshold': 0.4,
     'code_type': code_type,
