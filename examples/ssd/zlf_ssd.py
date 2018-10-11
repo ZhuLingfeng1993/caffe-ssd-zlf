@@ -39,14 +39,14 @@ gen_fssd = False
 gen_ssd = True
 gen_ssdLite = gen_ssd and False
 # Set true if you want to generate net soon
-use_pretrain_model = False
+use_pretrain_model = True
 gen_net_soon = True
 # Set true if you want to see if the net is overfit
 exchange_data = False
 # Set true if you want to start training right after generating all files.
 run_soon = True
 # Set true if you want to check the net is set properly(use small batch and CPU)
-check_net_flag = False
+check_net_flag = True
 save_snapshot_in_check_net = True
 save_det_out = False
 # Set true if you want to mergn bn in the most recent snapshot
@@ -91,7 +91,7 @@ def job_name_define():
   if gen_fssd == True:
     job_name = "FSSD_new_lr_0_0001_{}".format(resize)
   elif gen_ssd == True:
-    job_name = "SSD_lr0_0005_batch80_{}".format(resize)
+    job_name = "SSD_lr0_0005_batch80_finetune_from_MV4SSDcoco_{}".format(resize)
     if gen_ssdLite:
       job_name = "SSDExtraLite_{}".format(resize)
   if check_net_flag == True:
@@ -102,7 +102,7 @@ job_name = job_name_define()
 # basenet name
 basenet_name = "MobileNet"#"MobileNetMove4"#"VGGNet"#
 # train dataset name
-dataset_name = "coco"#"selected_and_manny_people_data_300x300"#"many_people_data_undistorted_300x300"#"UndistortedImgDataNew_300x300"#"VOC0712"#
+dataset_name = "selected_and_manny_people_data_300x300"#"coco"#"many_people_data_undistorted_300x300"#"UndistortedImgDataNew_300x300"#"VOC0712"#
 # test dataset name
 test_dataset_name = dataset_name #"VOC2007"#
 # The name of the model. Modify it if you want.
@@ -131,6 +131,7 @@ snapshot_prefix = "{}/{}".format(snapshot_dir, model_name)
 ## The pretrained model. 
 if use_pretrain_model:
   if basenet_name == "MobileNet":
+    #pretrain_model = "{}/models/{}/mobilenet_iter_73000.caffemodel".format(CAFFE_ROOT, basenet_name)
     pretrain_model = "{}/models/{}/mobilenet_iter_73000.caffemodel".format(CAFFE_ROOT, basenet_name)
   if basenet_name == "VGGNet":
     # The pretrained model. We use the Fully convolutional reduced (atrous) VGGNet.
@@ -425,7 +426,7 @@ def solver_param_define4train():
   num_gpus = len(gpulist)
 
   # Divide the mini-batch to different GPUs.
-  batch_size = 40*num_gpus#48*num_gpus
+  batch_size = 10*num_gpus#48*num_gpus
   accum_batch_size = batch_size
   iter_size = accum_batch_size / batch_size
   solver_mode = P.Solver.CPU
@@ -455,8 +456,7 @@ def solver_param_define4train():
     'base_lr': 0.0005,
     'weight_decay': 0.00005,
     'lr_policy': "multistep",
-    #'stepvalue': [40000,80000,100000,120000],
-    'stepvalue': [60000,100000,120000,140000],
+    'stepvalue': [40000,80000,100000,120000],
     'gamma': 0.5,
     #'momentum': 0.9,
     'iter_size': iter_size,
@@ -1063,7 +1063,7 @@ def create_net(net_stage):
           use_batchnorm=use_batchnorm, min_sizes=min_sizes, max_sizes=max_sizes,
           aspect_ratios=aspect_ratios, steps=steps, normalizations=normalizations,
           num_classes=num_classes, share_location=share_location, flip=flip, clip=clip,
-          prior_variance=prior_variance, kernel_size=1, pad=0, conf_postfix='new', loc_postfix='new', lr_mult=lr_mult)
+          prior_variance=prior_variance, kernel_size=1, pad=0, conf_postfix='', loc_postfix='', lr_mult=lr_mult)
   
   if net_stage == 'train':
     # Create the MultiBoxLossLayer.
