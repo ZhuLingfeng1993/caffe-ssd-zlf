@@ -46,7 +46,7 @@ exchange_data = False
 # Set true if you want to start training right after generating all files.
 run_soon = True
 # Set true if you want to check the net is set properly(use small batch and CPU)
-check_net_flag = True
+check_net_flag = False
 save_snapshot_in_check_net = True
 save_det_out = False
 # Set true if you want to mergn bn in the most recent snapshot
@@ -91,7 +91,7 @@ def job_name_define():
   if gen_fssd == True:
     job_name = "FSSD_new_lr_0_0001_{}".format(resize)
   elif gen_ssd == True:
-    job_name = "SSD_lr0_0005_batch80_finetune_from_MV4SSDcoco_{}".format(resize)
+    job_name = "SSD_lr0_0005_batch20_finetune_from_MV4SSDcoco_{}".format(resize)
     if gen_ssdLite:
       job_name = "SSDExtraLite_{}".format(resize)
   if check_net_flag == True:
@@ -100,7 +100,7 @@ def job_name_define():
 
 job_name = job_name_define()
 # basenet name
-basenet_name = "MobileNet"#"MobileNetMove4"#"VGGNet"#
+basenet_name = "MobileNetMove4"#"MobileNet"#"VGGNet"#
 # train dataset name
 dataset_name = "selected_and_manny_people_data_300x300"#"coco"#"many_people_data_undistorted_300x300"#"UndistortedImgDataNew_300x300"#"VOC0712"#
 # test dataset name
@@ -131,22 +131,17 @@ snapshot_prefix = "{}/{}".format(snapshot_dir, model_name)
 ## The pretrained model. 
 if use_pretrain_model:
   if basenet_name == "MobileNet":
-    #pretrain_model = "{}/models/{}/mobilenet_iter_73000.caffemodel".format(CAFFE_ROOT, basenet_name)
     pretrain_model = "{}/models/{}/mobilenet_iter_73000.caffemodel".format(CAFFE_ROOT, basenet_name)
   if basenet_name == "VGGNet":
     # The pretrained model. We use the Fully convolutional reduced (atrous) VGGNet.
     pretrain_model = "{}/models/VGGNet/VGG_ILSVRC_16_layers_fc_reduced.caffemodel".format(caffe_ssd_root)
+  if basenet_name == "MobileNetMove4":
+    pretrain_model = "models/MobileNetMove4/coco/SSD_lr0_0005_batch80_300x300/snapshot/MobileNetMove4_SSD_lr0_0005_batch80_300x300_coco_iter_279499.caffemodel"
 
 ################# Setting some thing about dataset #######################
 def data_set_section():
   print('Setting some thing about dataset...')
 data_set_section()
-
-# Stores the test image names and sizes. Created by data/VOC0712/create_list.sh
-name_size_file = "{}/VOC0712/val_name_size.txt".format(data_root)
-
-## Stores LabelMapItem.
-label_map_file = "{}/{}/VOC2007/labelmap_voc.prototxt".format(data_root, dataset_name)
 
 # Output class number, include the \'backgroud\' class
 num_classes = 7
@@ -154,6 +149,11 @@ num_classes = 7
 # The database file for training data. Created by data/VOC0712/create_data.sh
 train_data = "{}/{}/VOC2007/lmdb/VOC2007_train_lmdb".format(data_root, dataset_name)
 test_data = "{}/{}/VOC2007/lmdb/VOC2007_val_lmdb".format(data_root, dataset_name)
+
+# Stores the test image names and sizes. Created by data/VOC0712/create_list.sh
+name_size_file = "{}/{}/VOC2007/val_name_size.txt".format(data_root, dataset_name)
+## Stores LabelMapItem.
+label_map_file = "{}/{}/VOC2007/labelmap_voc.prototxt".format(data_root, dataset_name)
 
 #home_path = '/home/zhulingfeng' #can't use ~
 ## The database file for training data. Created by data/VOC0712/create_data.sh
@@ -421,12 +421,12 @@ solver_param_define_section()
 
 def solver_param_define4train():
   # Defining which GPUs to use.
-  gpus = "2,3"#"1,0,3"
+  gpus = "2"#"1,0,3"
   gpulist = gpus.split(",")
   num_gpus = len(gpulist)
 
   # Divide the mini-batch to different GPUs.
-  batch_size = 10*num_gpus#48*num_gpus
+  batch_size = 20*num_gpus#48*num_gpus
   accum_batch_size = batch_size
   iter_size = accum_batch_size / batch_size
   solver_mode = P.Solver.CPU
