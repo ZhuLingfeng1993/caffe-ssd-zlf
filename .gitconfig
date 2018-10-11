@@ -1,0 +1,13 @@
+[user]
+	name = zhulingfeng
+	email = 664675691@qq.com
+[credential]
+	helper = cache --timeout=3600
+[alias]
+	st = status
+	cm = commit
+	br = branch
+	ck = checkout
+	rH = reset HEAD
+	lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+	cmm = commit -m
