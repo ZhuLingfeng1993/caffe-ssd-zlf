@@ -141,18 +141,17 @@ def data_set_section():
   print('Setting some thing about dataset...')
 data_set_section()
 
-# Stores the test image names and sizes. Created by data/VOC0712/create_list.sh
-name_size_file = "{}/VOC0712/val_name_size.txt".format(data_root)
-
-## Stores LabelMapItem.
-label_map_file = "{}/{}/VOC2007/labelmap_voc.prototxt".format(data_root, dataset_name)
-
 # Output class number, include the \'backgroud\' class
 num_classes = 7
 
 # The database file for training data. Created by data/VOC0712/create_data.sh
 train_data = "{}/{}/VOC2007/lmdb/VOC2007_train_lmdb".format(data_root, dataset_name)
 test_data = "{}/{}/VOC2007/lmdb/VOC2007_val_lmdb".format(data_root, dataset_name)
+
+# Stores the test image names and sizes. Created by data/VOC0712/create_list.sh
+name_size_file = "{}/{}/VOC2007/val_name_size.txt".format(data_root, dataset_name)
+## Stores LabelMapItem.
+label_map_file = "{}/{}/VOC2007/labelmap_voc.prototxt".format(data_root, dataset_name)
 
 #home_path = '/home/zhulingfeng' #can't use ~
 ## The database file for training data. Created by data/VOC0712/create_data.sh
