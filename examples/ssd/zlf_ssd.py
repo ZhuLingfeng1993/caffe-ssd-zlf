@@ -48,7 +48,7 @@ run_soon = True
 # Set true if you want to check the net is set properly(use small batch and CPU)
 check_net_flag = False
 save_snapshot_in_check_net = True
-save_det_out = False
+save_det_out = True
 # Set true if you want to mergn bn in the most recent snapshot
 # Set true if necessary since it cost more storage space
 merge_bn_soon = True
@@ -734,6 +734,8 @@ det_out_eval_defint_section()
 # parameters for generating detection output.
 output_name_prefix ="det_results_"
 output_format = "VOC"
+if dataset_name == "coco":
+  output_format = "COCO"
 save_output_param = {
   'output_directory': output_result_dir,
   'output_name_prefix': output_name_prefix,
@@ -742,9 +744,7 @@ save_output_param = {
   'name_size_file': name_size_file,
   'num_test_image': num_test_image,
   }
-if dataset_name == "coco":
-  output_format = "COCO"
-  
+    
 global det_out_param 
 det_out_param = {
     'num_classes': num_classes,
