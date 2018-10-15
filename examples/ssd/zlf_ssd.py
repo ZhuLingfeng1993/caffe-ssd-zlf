@@ -91,7 +91,7 @@ def job_name_define():
   if gen_fssd == True:
     job_name = "FSSD_new_lr_0_0001_{}".format(resize)
   elif gen_ssd == True:
-    job_name = "SSD_lr0_0005_batch20_finetune_from_MV4SSDcoco_{}".format(resize)
+    job_name = "SSD_lr0_0005_batch20_finetune_from_MobileSSDcoco_{}".format(resize)
     if gen_ssdLite:
       job_name = "SSDExtraLite_{}".format(resize)
   if check_net_flag == True:
@@ -100,7 +100,7 @@ def job_name_define():
 
 job_name = job_name_define()
 # basenet name
-basenet_name = "MobileNetMove4"#"MobileNet"#"VGGNet"#
+basenet_name = "MobileNet"#"MobileNetMove4"#"VGGNet"#
 # train dataset name
 dataset_name = "selected_and_manny_people_data_300x300"#"coco"#"many_people_data_undistorted_300x300"#"UndistortedImgDataNew_300x300"#"VOC0712"#
 # test dataset name
@@ -131,7 +131,8 @@ snapshot_prefix = "{}/{}".format(snapshot_dir, model_name)
 ## The pretrained model. 
 if use_pretrain_model:
   if basenet_name == "MobileNet":
-    pretrain_model = "{}/models/{}/mobilenet_iter_73000.caffemodel".format(CAFFE_ROOT, basenet_name)
+    #pretrain_model = "{}/models/{}/mobilenet_iter_73000.caffemodel".format(CAFFE_ROOT, basenet_name)
+    pretrain_model = "/home/od/software/caffe-ssd-zlf/models/MobileNet/coco/SSD_lr0_0005_batch80_300x300/snapshot/MobileNet_SSD_lr0_0005_batch80_300x300_coco_iter_260000.caffemodel"
   if basenet_name == "VGGNet":
     # The pretrained model. We use the Fully convolutional reduced (atrous) VGGNet.
     pretrain_model = "{}/models/VGGNet/VGG_ILSVRC_16_layers_fc_reduced.caffemodel".format(caffe_ssd_root)
@@ -421,7 +422,7 @@ solver_param_define_section()
 
 def solver_param_define4train():
   # Defining which GPUs to use.
-  gpus = "2"#"1,0,3"
+  gpus = "3"#"1,0,3"
   gpulist = gpus.split(",")
   num_gpus = len(gpulist)
 
