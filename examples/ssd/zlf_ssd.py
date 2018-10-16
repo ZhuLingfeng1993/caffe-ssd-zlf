@@ -448,8 +448,10 @@ def solver_param_define4train():
   print("iters_per_epoch = %d" % iters_per_epoch)
   
   display_interval = iters_per_epoch
+  show_per_class_result = True
   if dataset_name == "coco":
     display_interval = 250
+    show_per_class_result = False
   test_interval = display_interval*6
   
   solver_param = {
@@ -477,7 +479,7 @@ def solver_param_define4train():
     'eval_type': "detection",
     'ap_version': "11point",
     'test_initialization': False,
-    'show_per_class_result': True,
+    'show_per_class_result': show_per_class_result,
     }
     
   return solver_param, batch_size_per_device, test_batch_size, gpus
