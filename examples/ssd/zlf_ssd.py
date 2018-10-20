@@ -100,7 +100,7 @@ def job_name_define():
 
 job_name = job_name_define()
 # basenet name
-basenet_name = "MobileNet"#"MobileNetMove4"#"VGGNet"#
+basenet_name = "MobileNet"#"MobileNetMove4"#
 # train dataset name
 dataset_name = "selected_and_manny_people_data_300x300"#"coco"#"many_people_data_undistorted_300x300"#"UndistortedImgDataNew_300x300"#"VOC0712"#
 # test dataset name
@@ -131,11 +131,11 @@ snapshot_prefix = "{}/{}".format(snapshot_dir, model_name)
 ## The pretrained model. 
 if use_pretrain_model:
   if basenet_name == "MobileNet":
-    pretrain_model = "{}/models/{}/mobilenet_iter_73000.caffemodel".format(CAFFE_ROOT, basenet_name)
-    #pretrain_model = "/home/od/software/caffe-ssd-zlf/models/MobileNet/coco/SSD_lr0_0005_batch80_300x300/snapshot/MobileNet_SSD_lr0_0005_batch80_300x300_coco_iter_260000.caffemodel"
+    pretrain_model = "models/MobileNet/mobilenet_iter_73000.caffemodel"
+    #pretrain_model = "models/MobileNet/coco/SSD_lr0_0005_batch80_300x300/snapshot/MobileNet_SSD_lr0_0005_batch80_300x300_coco_iter_260000.caffemodel"
   if basenet_name == "VGGNet":
     # The pretrained model. We use the Fully convolutional reduced (atrous) VGGNet.
-    pretrain_model = "{}/models/VGGNet/VGG_ILSVRC_16_layers_fc_reduced.caffemodel".format(caffe_ssd_root)
+    pretrain_model = "models/VGGNet/VGG_ILSVRC_16_layers_fc_reduced.caffemodel"
   if basenet_name == "MobileNetMove4":
     pretrain_model = "models/MobileNetMove4/coco/SSD_lr0_0005_batch80_300x300/snapshot/MobileNetMove4_SSD_lr0_0005_batch80_300x300_coco_iter_279499.caffemodel"
 
