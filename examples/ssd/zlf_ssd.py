@@ -24,7 +24,6 @@ import merge_bn
 # The directory which contains the caffe code.
 # We assume you are running the script at the CAFFE_ROOT.
 CAFFE_ROOT = os.getcwd()
-data_root = "{}/data".format(CAFFE_ROOT)
 ####################### set switches ###########################
 def set_switches_section():
   print('Setting switches ...')
@@ -100,7 +99,7 @@ def job_name_define():
 
 job_name = job_name_define()
 # basenet name
-basenet_name = "MobileNet"#"MobileNetMove4"#
+basenet_name = "MobileNet"#"VGGNet"#"MobileNetMove4"#
 # train dataset name
 dataset_name = "selected_and_manny_people_data_300x300"#"coco"#"many_people_data_undistorted_300x300"#"UndistortedImgDataNew_300x300"#"VOC0712"#
 # test dataset name
@@ -148,13 +147,13 @@ data_set_section()
 num_classes = 7
 
 # The database file for training data. Created by data/VOC0712/create_data.sh
-train_data = "{}/{}/VOC2007/lmdb/VOC2007_train_lmdb".format(data_root, dataset_name)
-test_data = "{}/{}/VOC2007/lmdb/VOC2007_val_lmdb".format(data_root, dataset_name)
+train_data = "data/{}/VOC2007/lmdb/VOC2007_train_lmdb".format(dataset_name)
+test_data = "data/{}/VOC2007/lmdb/VOC2007_val_lmdb".format( dataset_name)
 
 # Stores the test image names and sizes. Created by data/VOC0712/create_list.sh
-name_size_file = "{}/{}/VOC2007/val_name_size.txt".format(data_root, dataset_name)
+name_size_file = "data/{}/VOC2007/val_name_size.txt".format( dataset_name)
 ## Stores LabelMapItem.
-label_map_file = "{}/{}/VOC2007/labelmap_voc.prototxt".format(data_root, dataset_name)
+label_map_file = "data/{}/VOC2007/labelmap_voc.prototxt".format( dataset_name)
 
 #home_path = '/home/zhulingfeng' #can't use ~
 ## The database file for training data. Created by data/VOC0712/create_data.sh
@@ -168,17 +167,17 @@ num_train_image = 4522#535#13536
 num_test_image = 1508#179#4513
 
 if dataset_name == "coco":
-  name_size_file = "{}/coco/val2017_name_size.txt".format(data_root)
+  name_size_file = "data/coco/val2017_name_size.txt"
   
   ## Stores LabelMapItem.
-  label_map_file = "{}/{}/labelmap_coco.prototxt".format(data_root, dataset_name)
+  label_map_file = "data/{}/labelmap_coco.prototxt".format( dataset_name)
 
   # Output class number, include the \'backgroud\' class
   num_classes = 81
 
   # The database file for training data. Created by data/VOC0712/create_data.sh
-  train_data = "{}/{}/lmdb/coco_train_lmdb".format(data_root, dataset_name)
-  test_data = "{}/{}/lmdb/coco_val_lmdb".format(data_root, dataset_name)
+  train_data = "data/{}/lmdb/coco_train_lmdb".format( dataset_name)
+  test_data = "data/{}/lmdb/coco_val_lmdb".format( dataset_name)
 
   # Set image number
   num_train_image = 118287
