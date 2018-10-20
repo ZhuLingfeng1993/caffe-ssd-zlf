@@ -1154,7 +1154,8 @@ def create_job_files():
   train_log_file = '{}/train_{}_{}.log'.format(job_log_dir, model_name, timestamp)
   print(train_log_file)
   with open(train_job_file, 'w') as f:
-    f.write('cd {}\n'.format(CAFFE_ROOT))
+#      f.write('cd {}\n'.format(CAFFE_ROOT))
+    f.write('cd $CAFFE_ROOT}\n')
     f.write('./build/tools/caffe train \\\n')
     f.write('--solver="{}" \\\n'.format(solver_file))
     if train_src_param != '':
@@ -1169,7 +1170,8 @@ def create_job_files():
   print('Create parse_log job file...\n')
   parse_log_job_file = "{}/parse_log_{}.sh".format(job_log_dir,timestamp)
   with open(parse_log_job_file, 'w') as f:
-    f.write('cd {}\n'.format(CAFFE_ROOT))
+#      f.write('cd {}\n'.format(CAFFE_ROOT))
+    f.write('cd $CAFFE_ROOT}\n')
     f.write('python tools/extra/parse_log.py \\\n')
     f.write('--verbose \\\n')
     f.write('--delimiter , \\\n')  
@@ -1180,7 +1182,8 @@ def create_job_files():
   print('Create plot_log job file...\n')
   plot_log_job_file = "{}/plot_log{}.sh".format(job_log_dir,timestamp)
   with open(plot_log_job_file, 'w') as f:
-    f.write('cd {}\n'.format(CAFFE_ROOT))
+#      f.write('cd {}\n'.format(CAFFE_ROOT))
+    f.write('cd $CAFFE_ROOT}\n')
     f.write('python tools/extra/plot_log.py \\\n')
     f.write('{} \\\n'.format(train_log_file))
 
@@ -1212,7 +1215,8 @@ def create_job_files():
     ssd_detect_file = '{}/detect_{}.sh'.format(job_dir,model_name) 
     gpu_index = int(gpus.split(',')[0])
     with open(ssd_detect_file,'w') as f:
-      f.write('cd {}\n'.format(CAFFE_ROOT))
+#      f.write('cd {}\n'.format(CAFFE_ROOT))
+      f.write('cd $CAFFE_ROOT}\n')
       f.write('./build/examples/ssd/ssd_detect.bin \\\n')
       f.write('{} \\\n'.format(deploy_net_file))
       f.write('{} \\\n'.format(weight_file))
@@ -1227,7 +1231,8 @@ def create_job_files():
     print('Create plot_detections.sh ...\n')
     plot_detections_job_file = "{}/plot_detections_{}.sh".format(job_dir, model_name)
     with open(plot_detections_job_file, 'w') as f:
-      f.write('cd {}\n'.format(CAFFE_ROOT))
+#      f.write('cd {}\n'.format(CAFFE_ROOT))
+      f.write('cd $CAFFE_ROOT}\n')
       f.write('python examples/ssd/plot_detections.py \\\n')
       f.write('--visualize-threshold 0.01 \\\n')
       f.write('--labelmap-file {} \\\n'.format(label_map_file))
@@ -1243,7 +1248,8 @@ def create_job_files():
     # time iterations
     time_iterations = 100
     with open(time_deploy_job_file, 'w') as f:
-      f.write('cd {}\n'.format(CAFFE_ROOT))
+#      f.write('cd {}\n'.format(CAFFE_ROOT))
+      f.write('cd $CAFFE_ROOT}\n')
       f.write('./build/tools/zlf_caffe time \\\n')
       f.write('--model="{}" \\\n'.format(deploy_net_file))
       f.write('--weights="{}" \\\n'.format(weight_file))
