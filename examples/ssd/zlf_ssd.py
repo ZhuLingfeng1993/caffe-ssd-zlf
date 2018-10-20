@@ -46,7 +46,7 @@ exchange_data = False
 # Set true if you want to start training right after generating all files.
 run_soon = True
 # Set true if you want to check the net is set properly(use small batch and CPU)
-check_net_flag = False
+check_net_flag = True
 save_snapshot_in_check_net = True
 save_det_out = True
 # Set true if you want to mergn bn in the most recent snapshot
@@ -131,8 +131,8 @@ snapshot_prefix = "{}/{}".format(snapshot_dir, model_name)
 ## The pretrained model. 
 if use_pretrain_model:
   if basenet_name == "MobileNet":
-    #pretrain_model = "{}/models/{}/mobilenet_iter_73000.caffemodel".format(CAFFE_ROOT, basenet_name)
-    pretrain_model = "/home/od/software/caffe-ssd-zlf/models/MobileNet/coco/SSD_lr0_0005_batch80_300x300/snapshot/MobileNet_SSD_lr0_0005_batch80_300x300_coco_iter_260000.caffemodel"
+    pretrain_model = "{}/models/{}/mobilenet_iter_73000.caffemodel".format(CAFFE_ROOT, basenet_name)
+    #pretrain_model = "/home/od/software/caffe-ssd-zlf/models/MobileNet/coco/SSD_lr0_0005_batch80_300x300/snapshot/MobileNet_SSD_lr0_0005_batch80_300x300_coco_iter_260000.caffemodel"
   if basenet_name == "VGGNet":
     # The pretrained model. We use the Fully convolutional reduced (atrous) VGGNet.
     pretrain_model = "{}/models/VGGNet/VGG_ILSVRC_16_layers_fc_reduced.caffemodel".format(caffe_ssd_root)
@@ -1066,7 +1066,7 @@ def create_net(net_stage):
           use_batchnorm=use_batchnorm, min_sizes=min_sizes, max_sizes=max_sizes,
           aspect_ratios=aspect_ratios, steps=steps, normalizations=normalizations,
           num_classes=num_classes, share_location=share_location, flip=flip, clip=clip,
-          prior_variance=prior_variance, kernel_size=1, pad=0, conf_postfix='', loc_postfix='', lr_mult=lr_mult)
+          prior_variance=prior_variance, kernel_size=1, pad=0, conf_postfix='_new', loc_postfix='_new', lr_mult=lr_mult)
   
   if net_stage == 'train':
     # Create the MultiBoxLossLayer.
