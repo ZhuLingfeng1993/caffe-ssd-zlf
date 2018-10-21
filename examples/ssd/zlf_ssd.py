@@ -766,7 +766,7 @@ det_out_param_deploy = {
     'share_location': share_location,
     'background_label_id': background_label_id,
     'nms_param': {'nms_threshold': 0.45, 'top_k': 50},
-    'keep_top_k': 50,
+    'keep_top_k': 100,
     'confidence_threshold': 0.4,
     'code_type': code_type,
     }
