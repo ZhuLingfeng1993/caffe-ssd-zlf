@@ -383,7 +383,7 @@ int time() {
     iter_timer.Start();
     forward_timer.Start();
     for (int i = 0; i < layers.size(); ++i) {
-      //LOG(INFO) << "zlf: forward layer index = "<< i;
+      //LOG(INFO) << "forward layer index = "<< i;
       timer.Start();
       layers[i]->Forward(bottom_vecs[i], top_vecs[i]);
       forward_time_per_layer[i] += timer.MicroSeconds();
@@ -392,14 +392,14 @@ int time() {
     
     forward_timer.Start();
     for (int i = 0; i < layers.size(); ++i) {
-      //LOG(INFO) << "zlf: forward layer index = "<< i;
+      //LOG(INFO) << "forward layer index = "<< i;
       layers[i]->Forward(bottom_vecs[i], top_vecs[i]);
     }
     forward_time_pure += forward_timer.MicroSeconds();
     
     backward_timer.Start();
     for (int i = layers.size() - 1; i >= 0; --i) {
-      //LOG(INFO) << "zlf: backward layer index = "<< i;
+      //LOG(INFO) << "backward layer index = "<< i;
       if(layers[i]->layer_param().type() == "DetectionOutput")
         continue;
       timer.Start();
@@ -424,9 +424,12 @@ int time() {
   }
   total_timer.Stop();
   
+  LOG(INFO) << "network layer numbers = "<< layers.size();
+  LOG(INFO) << "network phase = "<< FLAGS_phase;
+
   for (int i = layers.size() - 1; i >= 0; --i) {
     if(layers[i]->layer_param().type() == "DetectionOutput")
-      LOG(INFO) << "zlf: layer_param().type() == \"DetectionOutput\", "<<
+      LOG(INFO) << "layer_param().type() == \"DetectionOutput\", "<<
       "skip backward computation.";
   }
   
@@ -436,18 +439,18 @@ int time() {
       FLAGS_iterations;
   }
   
-  LOG(INFO) << "zlf: Average Foward pass(sum of all layers' average time): "<< 
+  LOG(INFO) << "Average Foward pass(sum over all layers' average time): "<< 
     average_time_per_layer_sum<< " ms.";
-  LOG(INFO) << "zlf: Average Forward pass(average of layer by layer forward time with layer timer): " << forward_time / 1000 /
-    FLAGS_iterations << " ms.";
-  LOG(INFO) << "zlf: Average Forward pass(average of pure layer by layer forward time ): " << forward_time_pure / 1000 / FLAGS_iterations << " ms.";
+  LOG(INFO) << "Average Forward pass(average of pure forward time of all iterations): " <<
+    forward_time_pure / 1000 / FLAGS_iterations << " ms.";
+  LOG(INFO) << "Average Forward pass(same as caffe.cpp, average over forward_time of all iterations): " << 
+    forward_time / 1000 / FLAGS_iterations << " ms.";
   LOG(INFO) << "Average Backward pass: " << backward_time / 1000 /
     FLAGS_iterations << " ms.";
   LOG(INFO) << "Average Forward-Backward: " << total_timer.MilliSeconds() /
     FLAGS_iterations << " ms.";
   LOG(INFO) << "Total Time: " << total_timer.MilliSeconds() << " ms.";
-  LOG(INFO) << "zlf: layers numbers = "<< layers.size();
-  LOG(INFO) << "zlf: network phase = "<< FLAGS_phase;
+
   LOG(INFO) << "*** Benchmark ends ***";
   return 0;
 }
